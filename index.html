@@ -48,7 +48,7 @@
         /** init buttons from sw-cache requests */
         async function main() {
             const mainEl = document.getElementById("main")
-            const resp = await fetch("https://cache/keys")
+            const resp = await fetch("cache/keys")
             const keys = await resp.json()
             keys
                 .filter(k => k.includes("sounds/"))

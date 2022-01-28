@@ -8,13 +8,13 @@ const sounds = [
 self.addEventListener("install", function (e) {
     e.waitUntil(
         caches.open(cacheName).then(function (cache) {
-            return cache.addAll(["index.html", ...sounds.map(s => `sounds/${s}.mp3`)])
+            return cache.addAll(["/", "index.html", ...sounds.map(s => `sounds/${s}.mp3`)])
         })
     )
 })
 
 self.addEventListener("fetch", function (event) {
-    if (event.request.url === "https://cache/keys") {
+    if ((/cache\/keys/).test(event.request.url)) {
         event.respondWith(
             caches.open(cacheName)
             .then(c => c.keys())
