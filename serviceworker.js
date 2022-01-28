@@ -1,4 +1,4 @@
-const cacheName = "v3"
+const cacheName = "v1"
 const sounds = [
     "gong",
     "sword",
@@ -14,7 +14,7 @@ self.addEventListener("install", function (e) {
 })
 
 self.addEventListener("fetch", function (event) {
-    if (event.request.url === "http://cache/keys") {
+    if (event.request.url === "https://cache/keys") {
         event.respondWith(
             caches.open(cacheName)
             .then(c => c.keys())
