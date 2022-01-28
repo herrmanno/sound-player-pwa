@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar" content="#aa7700">
+    <meta name="theme-color" content="black">
+    <link rel="manifest" href="manifest.json">
+    <title>Bei Anruf Run, Melos!</title>
+    <style>
+        html, body, main { margin: 0; padding: 0; }
+        main {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px;
+            font-size: 16px;
+            width: calc(50vw - 12px); /* subtract half of 3 * 8px margin per row */
+            border: none;
+            margin: 4px 8px;
+            background-color: lightgrey;
+        }
+        button:nth-child(even) {
+            margin-left: 0px;
+        }
+    </style>
+    <script>
+        /** @param {Event} event */
+        function onClick(event) {
+            /** @type HTMLElement */
+            const el = event.target
+            if (el.hasAttribute("data-sound")) {
+                const sound = el.getAttribute("data-sound")
+                const audio = new Audio(`sounds/${sound}.mp3`)
+                audio.play()
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <main id="main" onclick="onClick(event)" />
+    <script>
+        /** init buttons from sw-cache requests */
+        async function main() {
+            const mainEl = document.getElementById("main")
+            const resp = await fetch("http://cache/keys")
+            const keys = await resp.json()
+            keys
+                .filter(k => k.includes("sounds/"))
+                .map(k => (/sounds\/([^.]+)/).exec(k)[1])
+                .forEach(sound => {
+                    Array(5).fill(null).forEach(_ => {
+                    const btn = document.createElement("button")
+                    btn.innerText = sound
+                    btn.setAttribute("data-sound", sound)
+                    mainEl.appendChild(btn)
+                    })
+                })
+        }
+    </script>
+    <script>
+        // install service worker
+        (async function registerSW() {
+            if ("serviceWorker" in navigator) {
+                try {
+                    await navigator
+                        .serviceWorker
+                        .register('serviceworker.js');
+                    main()
+                }
+                catch (e) {
+                    console.log('SW registration failed');
+                }
+            } else {
+                alert("Offline-Fähigkeit in diesem Gerät nicht verfügbar")
+            }
+        })()
+    </script>
+</body>
+
+</html>
