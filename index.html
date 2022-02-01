@@ -96,15 +96,20 @@
         // install service worker
         (async function registerSW() {
             if ("serviceWorker" in navigator) {
-                try {
-                    const sw = await navigator
-                        .serviceWorker
-                        .register("./serviceworker.js", { scope: "." });
-                    await sw.update()
+                if (navigator.online) {
+                    try {
+                        const sw = await navigator
+                            .serviceWorker
+                            .register("./serviceworker.js", { scope: "." });
+                        await sw.update()
+                        main()
+                    }
+                    catch (e) {
+                        alert("SW registration failed");
+                    }
+                } else {
+                    // we are offline but assume a service worker is already installed
                     main()
-                }
-                catch (e) {
-                    console.log("SW registration failed");
                 }
             } else {
                 alert("Offline-Fähigkeit in diesem Gerät nicht verfügbar")
