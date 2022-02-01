@@ -3,12 +3,12 @@ const sounds = [
     "gong",
     "sword",
     "glass"
-].map(s => `sounds/${s}.mp3`)
+].map(s => `./sounds/${s}.mp3`)
 
 const otherRessources = [
-    "/",
-    "index.html",
-    "favicon.ico",
+    "./",
+    "./index.html",
+    "./favicon.ico",
 ]
 
 self.addEventListener("install", function(_e) {
