@@ -48,8 +48,7 @@
         /** init buttons from sw-cache requests */
         async function main() {
             const mainEl = document.getElementById("main")
-            const resp = await fetch("cache/keys")
-            const keys = await resp.json()
+            const keys = await getKeys()
             keys
                 .filter(k => k.includes("sounds/"))
                 .map(k => (/sounds\/([^.]+)/).exec(k)[1])
@@ -62,15 +61,31 @@
                     })
                 })
         }
+        async function getKeys() {
+            try {
+                const resp = await fetch("cache/keys")
+                if (resp.status !== 200) {
+                    throw new Error("ERESPONSE cache/keys")
+                }
+                return resp.json()
+            } catch (e) {
+                return new Promise(r => {
+                    setTimeout(() => {
+                        getKeys().then(r)
+                    }, 500)
+                })
+            }
+        }
     </script>
     <script>
         // install service worker
         (async function registerSW() {
             if ("serviceWorker" in navigator) {
                 try {
-                    await navigator
+                    const sw = await navigator
                         .serviceWorker
                         .register('serviceworker.js');
+                    await sw.update()
                     main()
                 }
                 catch (e) {

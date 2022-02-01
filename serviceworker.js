@@ -3,12 +3,24 @@ const sounds = [
     "gong",
     "sword",
     "glass"
+].map(s => `sounds/${s}.mp3`)
+
+const otherRessources = [
+    "/",
+    "index.html",
+    "favicon.ico",
 ]
 
-self.addEventListener("install", function (e) {
+self.addEventListener("install", function(_e) {
+    // The promise that skipWaiting() returns can be safely ignored.
+    self.skipWaiting()
+})
+
+self.addEventListener("activate", function (e) {
+    self.clients.claim()
     e.waitUntil(
         caches.open(cacheName).then(function (cache) {
-            return cache.addAll(["/", "index.html", ...sounds.map(s => `sounds/${s}.mp3`)])
+            return cache.addAll([...otherRessources, ...sounds])
         })
     )
 })
