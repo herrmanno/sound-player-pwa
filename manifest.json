@@ -1,7 +1,7 @@
 {
     "name": "Bei Anruf Run, Melos!",
     "short_name": "RM-Phone",
-    "start_url": "/",
+    "start_url": "./",
     "scope": ".",
     "display": "standalone",
     "background_color": "#5900b3",
