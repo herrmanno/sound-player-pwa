@@ -96,7 +96,7 @@
         // install service worker
         (async function registerSW() {
             if ("serviceWorker" in navigator) {
-                if (navigator.online) {
+                if (navigator.onLine) {
                     try {
                         const sw = await navigator
                             .serviceWorker
