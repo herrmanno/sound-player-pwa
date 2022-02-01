@@ -7,6 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-status-bar" content="#aa7700">
     <meta name="theme-color" content="black">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-57x57.png" sizes="57x57">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-60x60.png" sizes="60x60">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-72x72.png" sizes="72x72">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-76x76.png" sizes="76x76">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-114x114.png" sizes="114x114">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-120x120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-128x128.png" sizes="128x128">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-144x144.png" sizes="144x144">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon-precomposed.png">
     <link rel="manifest" href="manifest.json">
     <title>Bei Anruf Run, Melos!</title>
     <style>
@@ -43,6 +55,9 @@
 </head>
 
 <body>
+    <noscript>
+        <h1>Does not work without JavaScript</h1>
+    </noscript>
     <main id="main" onclick="onClick(event)" />
     <script>
         /** init buttons from sw-cache requests */
@@ -84,12 +99,12 @@
                 try {
                     const sw = await navigator
                         .serviceWorker
-                        .register('serviceworker.js');
+                        .register("./serviceworker.js", { scope: "." });
                     await sw.update()
                     main()
                 }
                 catch (e) {
-                    console.log('SW registration failed');
+                    console.log("SW registration failed");
                 }
             } else {
                 alert("Offline-Fähigkeit in diesem Gerät nicht verfügbar")
