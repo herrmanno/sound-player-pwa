@@ -11,18 +11,20 @@ const otherRessources = [
     "./favicon.ico",
 ]
 
-self.addEventListener("install", function(_e) {
+self.addEventListener("install", function(e) {
+    e.waitUntil(
+        caches.open(cacheName).then(function (cache) {
+            return cache.addAll([...otherRessources, ...sounds].map(url => {
+                return new Request(url, { cache: "reload" })
+            }))
+        })
+    )
     // The promise that skipWaiting() returns can be safely ignored.
     self.skipWaiting()
 })
 
-self.addEventListener("activate", function (e) {
+self.addEventListener("activate", function (_e) {
     self.clients.claim()
-    e.waitUntil(
-        caches.open(cacheName).then(function (cache) {
-            return cache.addAll([...otherRessources, ...sounds])
-        })
-    )
 })
 
 self.addEventListener("fetch", function (event) {
@@ -36,11 +38,15 @@ self.addEventListener("fetch", function (event) {
         )
     } else {
         event.respondWith(
-            caches.match(event.request, {
-                ignoreMethod: true,
-                ignoreSearch: true,
-                ignoreVary: true,
-            }).then(function (response) {
+            caches.open(cacheName)
+            .then(cache => {
+                return cache.match(event.request, {
+                    ignoreMethod: true,
+                    ignoreSearch: true,
+                    ignoreVary: true,
+                })
+            })
+            .then(response => {
                 return response || fetch(event.request)
             })
         )
