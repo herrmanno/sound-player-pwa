@@ -38,16 +38,31 @@ self.addEventListener("fetch", function (event) {
         )
     } else {
         event.respondWith(
-            caches.open(cacheName)
-            .then(cache => {
-                return cache.match(event.request, {
-                    ignoreMethod: true,
-                    ignoreSearch: true,
-                    ignoreVary: true,
+            // try fetch-first if online and html file is requested
+            // otherwise index.html could never be updated w/o a serviceworker update
+            (self.navigator.onLine && event.request.mode === "navigate"
+                ? fetch(event.request)
+                : Promise.reject("offline")
+            )
+            .catch(() => {
+                return caches.open(cacheName)
+                .then(cache => {
+                    return cache.match(event.request, {
+                        ignoreMethod: true,
+                        ignoreSearch: true,
+                        ignoreVary: true,
+                    })
                 })
-            })
-            .then(response => {
-                return response || fetch(event.request)
+                .then(response => {
+                    // if we're online an requested images or sound, try to fetch them
+                    // as fallback, if they're not cached.
+                    // thats okay, because sound only gets updated on a serviceworker update
+                    if (self.navigator.onLine && event.request.mode !== "navigate") {
+                        return response || fetch(event.request)
+                    } else {
+                        return response
+                    }
+                })
             })
         )
     }
